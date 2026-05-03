@@ -1,0 +1,50 @@
+# Centralized configuration shared by all services
+# These properties can be overridden by individual service properties or environment variables
+
+spring:
+  cloud:
+    config:
+      allow-override: true
+      override-none: true
+      override-system-properties: false
+
+# Centralized JWT Secret
+jwt:
+  secret: aGVsbG8td29ybGQtc2VjcmV0LWtleS1mb3Itc2hvcHNwaGVyZS1tdXN0LWJlLWxvbmctZW5vdWdo
+  expirationMs: 3600000 # 1 hour
+
+resilience4j.circuitbreaker.instances:
+  catalogService:
+    slidingWindowType: COUNT_BASED
+    slidingWindowSize: 10
+    failureRateThreshold: 50
+    waitDurationInOpenState: 10s
+    permittedNumberOfCallsInHalfOpenState: 3
+    automaticTransitionFromOpenToHalfOpenEnabled: true
+    recordExceptions:
+      - java.io.IOException
+      - java.util.concurrent.TimeoutException
+      - feign.FeignException
+  orderService:
+    slidingWindowSize: 10
+    failureRateThreshold: 50
+    waitDurationInOpenState: 15s
+
+resilience4j.retry.instances:
+  catalogService:
+    maxAttempts: 3
+    waitDuration: 500ms
+    enableExponentialBackoff: true
+    exponentialBackoffMultiplier: 2
+    retryExceptions:
+      - java.io.IOException
+      - feign.RetryableException
+    ignoreExceptions:
+      - com.shopsphere.common.exception.ResourceNotFoundException
+      - com.shopsphere.common.exception.BadRequestException
+
+resilience4j.ratelimiter.instances:
+  checkoutEndpoint:
+    limitForPeriod: 5
+    limitRefreshPeriod: 1m
+    timeoutDuration: 0s

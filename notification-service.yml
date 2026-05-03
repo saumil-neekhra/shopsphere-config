@@ -1,0 +1,27 @@
+server:
+  port: 8085
+
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: freeguy8085@gmail.com
+    password: euxt wurm rakc abci
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            trust: "smtp.gmail.com"
+  rabbitmq:
+    host: rabbitmq
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
